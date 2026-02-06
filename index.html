@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Monthsary Baby!</title>
+  <title>Happy Monthsary Baby! ❤️</title>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -104,6 +104,7 @@
       object-fit: cover;
     }
 
+    /* Standard Button Styles */
     button {
       padding: 12px 25px;
       font-size: 1rem;
@@ -122,12 +123,24 @@
       box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     }
 
+    /* Special Style for Music Button to differentiate it */
+    #musicBtn {
+        background: rgba(255, 255, 255, 0.8);
+        color: #d63384;
+        font-size: 0.9rem;
+        padding: 8px 20px;
+        margin-bottom: 20px; /* Spacing below the music button */
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
     #hidden-message {
       display: none;
       margin-top: 15px;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 180px; /* Reserves space so the card doesn't jump too much */
+      min-height: 180px; 
     }
 
     .love-note {
@@ -162,8 +175,12 @@
 
   <div id="heart-container"></div>
 
+  <audio id="bgMusic" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+  </audio>
+
   <div class="card" id="main-card">
-    <h1>Happy Monthsary Baby!</h1>
+    <h1>Happy 1st Monthsary Baby!</h1>
     
     <div class="photo-frame">
       <img src="https://raw.githubusercontent.com/chester42069/monthsary/main/nez.jpg" alt="Nez Photo">
@@ -171,8 +188,12 @@
 
     <div id="timer">Loading our time...</div>
 
+    <div>
+        <button id="musicBtn" onclick="toggleMusic()">🎵 Play Our Song</button>
+    </div>
+
     <div id="initial-content">
-        <p style="color: white; margin-bottom: 20px;">I have something to tell you...</p>
+        <p style="color: white; margin-bottom: 20px; margin-top: 10px;">I have something to tell you...</p>
         <button onclick="revealMessage()">Open Letter 💌</button>
     </div>
 
@@ -187,10 +208,10 @@
 
   <script>
     const startDate = new Date(2026, 0, 7); 
-    let typewriterTimeout; // Variable to track the active typing effect
+    let typewriterTimeout; 
 
     const messagePages = [
-        "Happy 1st monthsary, baby! Honestly, hindi ko talaga akalain na aabot tayo sa ganito. Alam mo naman na hindi ako sanay sa LDR di ba?",
+        "Happy 1st monthsary baby! Honestly, hindi ko talaga akalain na aabot tayo sa ganito. Alam mo naman na hindi ako sanay sa LDR di ba?",
         "Isipin mo, nagkakilala lang tayo sa rb, bihira pa tayo maglaro noon, pero look at us now, mahal na mahal na kita. Who would’ve thought na sa paglalaro ko lang pala makikilala yung taong magpapasaya sa akin nang ganito?",
         "Kahit hindi pa tayo nagkakasama nang personal, iba yung impact mo sa buhay ko. Alam ko naman na hindi madali tong situation natin. Malayo tayo sa isa’t isa and screen lang ang pagitan.",
         "Pero gusto ko lang malaman mo na kahit ganito, sobrang totoo ng nararamdaman ko sayo. Hindi to biro, baby. I’m not looking for anyone else kasi ikaw lang talaga yung love, want, and need ko.",
@@ -202,6 +223,23 @@
     ];
 
     let currentPage = 0;
+
+    // --- NEW MUSIC LOGIC ---
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    let isPlaying = false;
+
+    function toggleMusic() {
+        if (isPlaying) {
+            music.pause();
+            musicBtn.innerHTML = "🎵 Play Our Song";
+        } else {
+            music.play();
+            musicBtn.innerHTML = "⏸ Pause Music";
+        }
+        isPlaying = !isPlaying;
+    }
+    // -----------------------
 
     function updateTimer() {
         const now = new Date();
@@ -241,21 +279,19 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         
-        // STOP THE OLD TYPEWRITER: This prevents the scrambling/overlapping text
         clearTimeout(typewriterTimeout);
 
         prevBtn.style.visibility = currentPage === 0 ? "hidden" : "visible";
         nextBtn.innerText = currentPage === messagePages.length - 1 ? "Next" : "Next";
 
         let i = 0;
-        noteElement.innerHTML = ""; // Clear existing text immediately
+        noteElement.innerHTML = ""; 
         const text = messagePages[currentPage];
         
         function typeWriter() {
             if (i < text.length) {
                 noteElement.innerHTML += text.charAt(i);
                 i++;
-                // Save the timeout ID so we can cancel it later
                 typewriterTimeout = setTimeout(typeWriter, 40); 
             }
         }
@@ -278,4 +314,3 @@
   </script>
 </body>
 </html>
-
