@@ -13,9 +13,7 @@
       --primary: #ff758c;
       --secondary: #ff7eb3;
       --accent: #a18cd1;
-      --glass: rgba(255, 255, 255, 0.25);
       --glass-border: rgba(255, 255, 255, 0.4);
-      --text-white: #ffffff;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -116,12 +114,22 @@
       position: relative;
       z-index: 2;
       box-shadow: 0 10px 25px rgba(255, 117, 140, 0.5);
-      animation: pulse 3s infinite ease-in-out;
+      background: #fff; /* White background behind image */
     }
     
-    .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-frame img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      /* Transition for image swap */
+      transition: opacity 0.4s ease-in-out;
+      opacity: 1;
+    }
 
-    /* Decorative ring behind photo */
+    /* Class to hide image during swap */
+    .fade-out { opacity: 0 !important; }
+
+    /* Decorative ring */
     .frame-wrapper::before {
       content: '';
       position: absolute;
@@ -132,7 +140,6 @@
       z-index: 1;
     }
 
-    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
     /* --- DASHBOARD TIMER --- */
@@ -167,9 +174,8 @@
       margin-bottom: 25px;
     }
 
-    /* Audio Bars Animation */
     .audio-visualizer {
-      display: none; /* Hidden by default */
+      display: none;
       align-items: flex-end;
       gap: 3px;
       height: 20px;
@@ -280,7 +286,7 @@
     
     <div class="frame-wrapper">
       <div class="photo-frame">
-        <img src="https://raw.githubusercontent.com/chester42069/monthsary/main/nez.jpg" alt="Nez Photo">
+        <img id="main-photo" src="https://raw.githubusercontent.com/chester42069/monthsary/main/nez.jpg" alt="Nez Photo">
       </div>
     </div>
 
@@ -320,17 +326,28 @@
     const startDate = new Date(2026, 0, 7); 
     let typewriterTimeout; 
 
-    // Same beautiful messages
     const messagePages = [
         "Happy 1st monthsary baby! ❤️ Honestly, hindi ko talaga akalain na aabot tayo sa ganito. Alam mo naman na hindi ako sanay sa LDR di ba?",
         "Isipin mo, nagkakilala lang tayo sa RB, bihira pa tayo maglaro noon, pero look at us now, mahal na mahal na kita. Who would’ve thought na sa paglalaro ko lang pala makikilala yung taong magpapasaya sa akin nang ganito?",
-        "Kahit hindi pa tayo nagkakasama nang personal, iba yung impact mo sa buhay ko. Alam ko naman na hindi madali tong situation natin. Malayo tayo sa isa’t isa and screen lang ang pagitan. 🥺",
+        "Kahit hindi pa tayo nagkakasama nang personal, iba yung impact mo sa buhay ko. Alam ko naman na hindi madali tong situation natin. Malayo tayo sa isa’t isa and screen lang ang pagitan.",
         "Pero gusto ko lang malaman mo na kahit ganito, sobrang totoo ng nararamdaman ko sayo. Hindi to biro, baby. I’m not looking for anyone else kasi ikaw lang talaga yung love, want, and need ko.",
-        "Dati, hindi talaga ako sanay sa calls, pero ngayon? Every call, every message, and every game natin together sobrang precious sa akin lahat yun. 🎮🎧",
+        "Dati, hindi talaga ako sanay sa calls, pero ngayon? Every call, every message, and every game natin together sobrang precious sa akin lahat yun.",
         "Sorry din kung minsan hindi ko masyadong ma-express yung love ko sa paraang ginagawa ko ngayon. Pero promise, mas gagalingan ko pa at mas mag eeffort ako para hindi ka magsawa o iwan ako...",
-        "Kasi ayokong ayoko na mawala ka pa sa akin. Kahit sa screen lang kita nakikita at naririnig, pinaramdam mo sa akin yung love and saya na hindi ko inexpect na posible pala. ✨",
+        "Kasi ayokong ayoko na mawala ka pa sa akin. Kahit sa screen lang kita nakikita at naririnig, pinaramdam mo sa akin yung love and saya na hindi ko inexpect na posible pala.",
         "Thank you kasi dumating ka sa buhay ko at thank you sa time na binibigay mo kahit ang layo natin. Thank you for giving me a second chance and for always understanding me.",
         "Ready akong mag wait hanggang sa araw na magkita na tayo, alam ko na worth it lahat to. Babawi talaga ako sayo baby. Happy 1st monthsary ulit! Akin ka lang and sayo lang ako. I love you so much! ❤️"
+    ];
+
+    // --- YOUR PHOTOS HERE ---
+    // Ensure there are enough photos for the messages, or they will repeat!
+    const photos = [
+        "https://raw.githubusercontent.com/chester42069/monthsary/main/nez.jpg", 
+        "https://raw.githubusercontent.com/chester42069/monthsary/main/nez1.jpg",  
+        "https://raw.githubusercontent.com/chester42069/monthsary/main/nez2.jpg", 
+        "https://raw.githubusercontent.com/chester42069/monthsary/main/nez3.jpg",        
+        "https://raw.githubusercontent.com/chester42069/monthsary/main/nez4.jpg",        
+        "https://raw.githubusercontent.com/chester42069/monthsary/main/nez5.jpg",        
+        "https://raw.githubusercontent.com/chester42069/monthsary/main/nez6.jpg",      
     ];
 
     let currentPage = 0;
@@ -354,7 +371,7 @@
         isPlaying = !isPlaying;
     }
 
-    // --- NEW TIMER LOGIC ---
+    // --- TIMER LOGIC ---
     function updateTimer() {
         const now = new Date();
         const diff = now - startDate;
@@ -371,7 +388,7 @@
     setInterval(updateTimer, 1000);
     updateTimer();
 
-    // --- FLOATING HEARTS ---
+    // --- HEARTS ---
     function createHearts() {
         const container = document.getElementById('heart-container');
         const symbols = ['❤', '✨', '🧸', '💌', '🌸']; 
@@ -388,7 +405,7 @@
     }
     createHearts();
 
-    // --- MESSAGE HANDLING ---
+    // --- DISPLAY LOGIC ---
     function revealMessage() {
         document.getElementById('initial-content').style.display = 'none';
         document.getElementById('hidden-message').style.display = 'flex';
@@ -400,12 +417,14 @@
         const noteElement = document.getElementById('note-text');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
+        const mainPhoto = document.getElementById('main-photo');
         
         clearTimeout(typewriterTimeout);
 
         prevBtn.style.visibility = currentPage === 0 ? "hidden" : "visible";
         nextBtn.innerText = currentPage === messagePages.length - 1 ? "Finish" : "Next";
 
+        // 1. Text Animation
         noteElement.innerHTML = ""; 
         let i = 0;
         const text = messagePages[currentPage];
@@ -418,6 +437,22 @@
             }
         }
         typeWriter();
+
+        // 2. Image Swap Logic with smooth fade
+        // Use modulo (%) so if you have less photos than text, it loops back to the start
+        const photoIndex = currentPage % photos.length;
+        const newSrc = photos[photoIndex];
+
+        // Fade out
+        mainPhoto.classList.add('fade-out');
+
+        // Wait 300ms, swap source, then fade in
+        setTimeout(() => {
+            mainPhoto.src = newSrc;
+            mainPhoto.onload = () => {
+                mainPhoto.classList.remove('fade-out');
+            };
+        }, 300);
     }
 
     function changePage(step) {
@@ -440,21 +475,8 @@
         var end = Date.now() + duration;
 
         (function frame() {
-            confetti({
-                particleCount: 5,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-                colors: ['#ff758c', '#ffadad']
-            });
-            confetti({
-                particleCount: 5,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-                colors: ['#ffffff', '#ff99ac']
-            });
-
+            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff758c', '#ffadad'] });
+            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ffffff', '#ff99ac'] });
             if (Date.now() < end) {
                 requestAnimationFrame(frame);
             }
