@@ -16,12 +16,13 @@
       background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1);
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
+      overflow-x: hidden;
       position: relative;
+      padding: 20px;
     }
 
     @keyframes gradientBG {
@@ -44,19 +45,23 @@
       100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
     }
 
+    /* FIXED CARD HEIGHT & SCROLLING ISSUES */
     .card {
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(15px);
       -webkit-backdrop-filter: blur(15px);
       border-radius: 20px;
-      padding: 40px 30px;
+      padding: 30px;
       box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.18);
       text-align: center;
       max-width: 450px;
-      width: 90%;
+      width: 100%;
       z-index: 10;
       animation: fadeIn 1s ease-out forwards;
+      display: flex;
+      flex-direction: column;
+      height: auto;
     }
 
     @keyframes fadeIn {
@@ -67,12 +72,12 @@
     h1 {
       font-family: 'Dancing Script', cursive;
       color: #fff;
-      font-size: 3rem;
+      font-size: 2.8rem;
       margin-bottom: 10px;
     }
 
     #timer {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 500; 
         color: #fff;
         background: rgba(255, 255, 255, 0.2);
@@ -84,12 +89,13 @@
     }
 
     .photo-frame {
-      width: 120px;
-      height: 120px;
+      width: 110px;
+      height: 110px;
       margin: 0 auto 15px;
       border-radius: 50%;
       border: 4px solid rgba(255,255,255,0.5);
       overflow: hidden;
+      flex-shrink: 0;
     }
     
     .photo-frame img {
@@ -108,6 +114,7 @@
       cursor: pointer;
       transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      font-family: 'Poppins', sans-serif;
     }
 
     button:hover {
@@ -117,35 +124,37 @@
 
     #hidden-message {
       display: none;
-      margin-top: 20px;
-      min-height: 200px;
-      display: flex;
+      margin-top: 15px;
       flex-direction: column;
       justify-content: space-between;
+      min-height: 180px; /* Reserves space so the card doesn't jump too much */
     }
 
     .love-note {
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: #fff;
       line-height: 1.6;
       text-align: left;
       margin-bottom: 20px;
+      font-weight: 300;
     }
 
     .nav-buttons {
       display: flex;
       justify-content: space-between;
       gap: 10px;
+      margin-top: auto;
     }
 
     .nav-btn {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       padding: 8px 18px;
     }
 
     @media (max-width: 480px) {
         h1 { font-size: 2.2rem; }
-        .card { padding: 25px 20px; }
+        .card { padding: 20px; }
+        .love-note { font-size: 0.9rem; }
     }
   </style>
 </head>
@@ -167,7 +176,7 @@
         <button onclick="revealMessage()">Open Letter 💌</button>
     </div>
 
-    <div id="hidden-message" style="display: none;">
+    <div id="hidden-message">
       <p class="love-note" id="note-text"></p>
       <div class="nav-buttons">
         <button id="prevBtn" class="nav-btn" onclick="changePage(-1)">Back</button>
@@ -178,6 +187,7 @@
 
   <script>
     const startDate = new Date(2026, 0, 7); 
+    let typewriterTimeout; // Variable to track the active typing effect
 
     const messagePages = [
         "Happy 1st monthsary, baby! Honestly, hindi ko talaga akalain na aabot tayo sa ganito. Alam mo naman na hindi ako sanay sa LDR, ‘di ba?",
@@ -231,18 +241,22 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         
+        // STOP THE OLD TYPEWRITER: This prevents the scrambling/overlapping text
+        clearTimeout(typewriterTimeout);
+
         prevBtn.style.visibility = currentPage === 0 ? "hidden" : "visible";
-        nextBtn.innerText = currentPage === messagePages.length - 1 ? "I Love You! ❤️" : "Next";
+        nextBtn.innerText = currentPage === messagePages.length - 1 ? "End ❤️" : "Next";
 
         let i = 0;
-        noteElement.innerHTML = "";
+        noteElement.innerHTML = ""; // Clear existing text immediately
         const text = messagePages[currentPage];
         
         function typeWriter() {
             if (i < text.length) {
                 noteElement.innerHTML += text.charAt(i);
                 i++;
-                setTimeout(typeWriter, 35); 
+                // Save the timeout ID so we can cancel it later
+                typewriterTimeout = setTimeout(typeWriter, 40); 
             }
         }
         typeWriter();
@@ -252,7 +266,7 @@
         currentPage += step;
         if (currentPage >= messagePages.length) {
             triggerConfetti();
-            document.getElementById('hidden-message').innerHTML = "<h2 style='color:white; font-family:Dancing Script; font-size:2rem;'>Happy Monthsary again, Baby! <br> See you soon! 💋</h2>";
+            document.getElementById('hidden-message').innerHTML = "<h2 style='color:white; font-family:Dancing Script; font-size:2rem; margin-top:20px;'>I love you forever! <br> See you soon, baby! 💋</h2>";
             return;
         }
         displayPage();
